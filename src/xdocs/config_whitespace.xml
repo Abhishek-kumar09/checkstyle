@@ -1287,22 +1287,59 @@ public void foo(final char @NotNull [] param) {} // No violation
       </subsection>
 
       <subsection name="Examples" id="NoWhitespaceBefore_Examples">
-        <p>
-          To configure the check:
-        </p>
+      <p>
+        To configure the check:
+      </p>
         <source>
 &lt;module name=&quot;NoWhitespaceBefore&quot;/&gt;
-        </source>
+      </source>
 
-        <p>
-          To configure the check to allow linebreaks before a DOT token:
-        </p>
-        <source>
+      <p>
+          Example of violation:
+      </p>
+      <source>
+int a = a ++ + a --; // '++' and '--' are preceded with whitespace
+int foo
+; // allowLineBreaks is set false by default
+public int b ;
+for (int i = 0 ; i &lt; 5; i++) {}
+return ; // ';' is preceded with whitespace in above three examples
+      </source>
+      <p>
+          Example of correct code:
+      </p>
+      <source>
+int a = a++ + a--;
+int foo;
+public int b;
+for (int i = 0; i &lt; 5; i++) {}
+return;
+      </source>
+      <p>
+        To configure the check to allow linebreaks before a DOT token:
+      </p>
+      <source>
 &lt;module name=&quot;NoWhitespaceBefore&quot;&gt;
   &lt;property name=&quot;tokens&quot; value=&quot;DOT&quot;/&gt;
   &lt;property name=&quot;allowLineBreaks&quot; value=&quot;true&quot;/&gt;
 &lt;/module&gt;
-        </source>
+      </source>
+      <p>
+          Example of violation:
+      </p>
+      <source>
+java .lang .Integer foo = 1;
+Arrays .toString(arr); // No whitespace before '.' is allowed
+      </source>
+      <p>
+          Example of correct code:
+      </p>
+      <source>
+java.lang.Integer foo = 1;
+Arrays.toString(arr);
+int bar
+; // Linebreak is allowed
+      </source>
       </subsection>
 
       <subsection name="Example of Usage" id="NoWhitespaceBefore_Example_of_Usage">

@@ -61,6 +61,23 @@ import com.puppycrawl.tools.checkstyle.utils.CommonUtil;
  * <pre>
  * &lt;module name=&quot;NoWhitespaceBefore&quot;/&gt;
  * </pre>
+ * <p>Example of violation:</p>
+ * <pre>
+ * int a = a ++ + a --; // '++' and '--' are preceded with whitespace
+ * int foo
+ * ; // allowLineBreaks is set false by default
+ * public int b ;
+ * for (int i = 0 ; i &lt; 5; i++) {}
+ * return ; // ';' is preceded with whitespace in above three examples
+ * </pre>
+ * <p>Example of correct code:</p>
+ * <pre>
+ * int a = a++ + a--;
+ * int foo;
+ * public int b;
+ * for (int i = 0; i &lt; 5; i++) {}
+ * return;
+ * </pre>
  * <p>
  * To configure the check to allow linebreaks before a DOT token:
  * </p>
@@ -70,7 +87,18 @@ import com.puppycrawl.tools.checkstyle.utils.CommonUtil;
  *   &lt;property name=&quot;allowLineBreaks&quot; value=&quot;true&quot;/&gt;
  * &lt;/module&gt;
  * </pre>
- *
+ * <p>Example of violation:</p>
+ * <pre>
+ * java .lang .Integer foo = 1;
+ * Arrays .toString(arr); // No whitespace before '.' is allowed
+ * </pre>
+ * <p>Example of correct code:</p>
+ * <pre>
+ * java.lang.Integer foo = 1;
+ * Arrays.toString(arr);
+ * int bar
+ * ; // Linebreak is allowed
+ *</pre>
  * @since 3.0
  */
 @StatelessCheck
