@@ -163,8 +163,8 @@ jobs:
   # should be always last step
   send_message:
     runs-on: ubuntu-latest
-    needs: [parse_body, make_report]
-    if: failure() || success()
+#    needs: [parse_body, make_report]
+#    if: failure() || success()
     steps:
 #
 #      - name: Get message
