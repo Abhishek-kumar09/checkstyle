@@ -12,7 +12,7 @@
 # For another bucket, you will need to change the secrets.
 #------------------------------------------------------------------------------------
 name: Diff-Report
-env:
+#env:
 #  AWS_REGION: us-east-2
 #  AWS_BUCKET_NAME: "checkstyle-diff-reports"
 
