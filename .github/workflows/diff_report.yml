@@ -13,8 +13,9 @@
 #------------------------------------------------------------------------------------
 name: Diff-Report
 env:
-  AWS_REGION: us-east-2
-  AWS_BUCKET_NAME: "checkstyle-diff-reports"
+#  AWS_REGION: us-east-2
+#  AWS_BUCKET_NAME: "checkstyle-diff-reports"
+
 on:
   issue_comment:
     types: [created, edited]
@@ -120,12 +121,12 @@ jobs:
          mv *.xml ./contribution/checkstyle-tester/
          sudo apt install groovy
          
-     - name: Configure AWS Credentials
-       uses: aws-actions/configure-aws-credentials@v1
-       with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ env.AWS_REGION }}    
+#     - name: Configure AWS Credentials
+#       uses: aws-actions/configure-aws-credentials@v1
+#       with:
+#        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#        aws-region: ${{ env.AWS_REGION }}
          
      - name: Generate report
        run: |
@@ -143,15 +144,17 @@ jobs:
            groovy diff.groovy -r $REPO -b master -p $REF -c diff_config.xml -l project.properties
          fi
 
-     - name: Copy Report to AWS S3 Bucket
-       run: |
-        bash
-        TIME=`date +%Y%H%M%S`
-        FOLDER="${{needs.parse_body.outputs.branch}}_$TIME"
-        DIFF="./contribution/checkstyle-tester/reports/diff"
-        LINK="https://${{env.AWS_BUCKET_NAME}}.s3.${{env.AWS_REGION}}.amazonaws.com"
-        aws s3 cp $DIFF s3://${{env.AWS_BUCKET_NAME}}/$FOLDER/reports/diff/ --recursive
-        echo $LINK/$FOLDER/reports/diff/index.html > message
+#     - name: Copy Report to AWS S3 Bucket
+#       run: |
+#        bash
+#        TIME=`date +%Y%H%M%S`
+#        FOLDER="${{needs.parse_body.outputs.branch}}_$TIME"
+#        DIFF="./contribution/checkstyle-tester/reports/diff"
+#        LINK="https://${{env.AWS_BUCKET_NAME}}.s3.${{env.AWS_REGION}}.amazonaws.com"
+#        aws s3 cp $DIFF s3://${{env.AWS_BUCKET_NAME}}/$FOLDER/reports/diff/ --recursive
+#        echo $LINK/$FOLDER/reports/diff/index.html > message
+         
+
         
      - name: Set output
        id: out
@@ -163,23 +166,23 @@ jobs:
     needs: [parse_body, make_report]
     if: failure() || success()
     steps:
-
-      - name: Get message
-        run: |
-         if [ -z  "${{needs.make_report.outputs.message}}" ]; then
-           JOBS_LINK="https://github.com/checkstyle/checkstyle/actions/runs/${{github.run_id}}"
-           API_LINK="https://api.github.com/repos/checkstyle/checkstyle/actions/runs/"
-           API_LINK="${API_LINK}${{github.run_id}}/jobs"
-           wget $API_LINK -O info.json
-           jq '.jobs' info.json > jobs
-           jq '.[] | select(.conclusion == "failure") | .name' jobs > job_name
-           jq '.[] | select(.conclusion == "failure") | .steps' jobs > steps
-           jq '.[] | select(.conclusion == "failure") | .name' steps > step_name
-           echo "Report generation job failed on phase $(cat job_name)," > message
-           echo "step $(cat step_name).<br>Link: $JOBS_LINK" >> message
-         else  
-           echo "${{needs.make_report.outputs.message}}" > message
-         fi
+#
+#      - name: Get message
+#        run: |
+#         if [ -z  "${{needs.make_report.outputs.message}}" ]; then
+#           JOBS_LINK="https://github.com/checkstyle/checkstyle/actions/runs/${{github.run_id}}"
+#           API_LINK="https://api.github.com/repos/checkstyle/checkstyle/actions/runs/"
+#           API_LINK="${API_LINK}${{github.run_id}}/jobs"
+#           wget $API_LINK -O info.json
+#           jq '.jobs' info.json > jobs
+#           jq '.[] | select(.conclusion == "failure") | .name' jobs > job_name
+#           jq '.[] | select(.conclusion == "failure") | .steps' jobs > steps
+#           jq '.[] | select(.conclusion == "failure") | .name' steps > step_name
+#           echo "Report generation job failed on phase $(cat job_name)," > message
+#           echo "step $(cat step_name).<br>Link: $JOBS_LINK" >> message
+#         else
+#           echo "${{needs.make_report.outputs.message}}" > message
+#         fi
      
       - name: Set message
         id: out
