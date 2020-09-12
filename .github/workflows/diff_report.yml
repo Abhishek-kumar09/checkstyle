@@ -126,6 +126,15 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION }}    
+      
+     - name: set upstream
+       run: |
+         cd checkstyle
+         bash
+         MAIN_CHECKSTYLE_HTTPS="https://github.com/checkstyle/checkstyle.git" 
+         git remote add upstream $MAIN_CHECKSTYLE_HTTPS\
+           && git fetch upstream\  
+         cd ../
          
      - name: Generate report
        run: |
@@ -137,10 +146,10 @@ jobs:
            groovy diff.groovy -r $REPO -p $REF -pc new_module_config.xml -m single\
              -l project.properties
          elif [ -f patch_config.xml ]; then
-           groovy diff.groovy -r $REPO -b master -p $REF -bc diff_config.xml -pc patch_config.xml\
+           groovy diff.groovy -r $REPO -b upstream/master -p $REF -bc diff_config.xml -pc patch_config.xml\
              -l project.properties
          else
-           groovy diff.groovy -r $REPO -b master -p $REF -c diff_config.xml -l project.properties
+           groovy diff.groovy -r $REPO -b upstream/master -p $REF -c diff_config.xml -l project.properties
          fi
 
      - name: Copy Report to AWS S3 Bucket
