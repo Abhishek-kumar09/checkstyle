@@ -12,9 +12,9 @@
 # For another bucket, you will need to change the secrets.
 #------------------------------------------------------------------------------------
 name: Diff-Report
-env:
-  AWS_REGION: us-east-2
-  AWS_BUCKET_NAME: "checkstyle-diff-reports"
+#env:
+#  AWS_REGION: us-east-2
+#  AWS_BUCKET_NAME: "checkstyle-diff-reports"
 on:
   issue_comment:
     types: [created, edited]
@@ -105,6 +105,15 @@ jobs:
         path: checkstyle
         fetch-depth: 0
 
+     - name: set upstream
+       run: |
+         cd checkstyle
+         bash
+         MAIN_CHECKSTYLE_HTTPS="https://github.com/checkstyle/checkstyle.git"
+         git remote add upstream $MAIN_CHECKSTYLE_HTTPS\
+           && git fetch upstream;
+         cd ../
+
      # fetch-depth default: 1
      # Don't need history for all branches and tags here.
      - name: Download contribution
@@ -133,14 +142,15 @@ jobs:
          bash
          REF="origin/${{needs.parse_body.outputs.branch}}"
          REPO="../../checkstyle"
+         BRANCH="upstream/master"
          if [ -f new_module_config.xml ]; then
            groovy diff.groovy -r $REPO -p $REF -pc new_module_config.xml -m single\
              -l project.properties
          elif [ -f patch_config.xml ]; then
-           groovy diff.groovy -r $REPO -b master -p $REF -bc diff_config.xml -pc patch_config.xml\
+           groovy diff.groovy -r $REPO -b $BRANCH -p $REF -bc diff_config.xml -pc patch_config.xml\
              -l project.properties
          else
-           groovy diff.groovy -r $REPO -b master -p $REF -c diff_config.xml -l project.properties
+           groovy diff.groovy -r $REPO -b $BRANCH -p $REF -c diff_config.xml -l project.properties
          fi
 
 #     - name: Copy Report to AWS S3 Bucket
@@ -177,8 +187,8 @@ jobs:
       - name: Get message
         run: |
          if [ -z  "${{needs.make_report.outputs.message}}" ]; then
-           JOBS_LINK="https://github.com/checkstyle/checkstyle/actions/runs/${{github.run_id}}"
-           API_LINK="https://api.github.com/repos/checkstyle/checkstyle/actions/runs/"
+           JOBS_LINK="https://github.com/abhishek-kumar09/checkstyle/actions/runs/${{github.run_id}}"
+           API_LINK="https://api.github.com/repos/abhishek-kumar09/checkstyle/actions/runs/"
            API_LINK="${API_LINK}${{github.run_id}}/jobs"
            wget $API_LINK -O info.json
            jq '.jobs' info.json > jobs
