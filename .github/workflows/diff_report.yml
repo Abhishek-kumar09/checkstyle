@@ -120,12 +120,12 @@ jobs:
          mv *.xml ./contribution/checkstyle-tester/
          sudo apt install groovy
 
-     - name: Configure AWS Credentials
-       uses: aws-actions/configure-aws-credentials@v1
-       with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ env.AWS_REGION }}
+#     - name: Configure AWS Credentials
+#       uses: aws-actions/configure-aws-credentials@v1
+#       with:
+#        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#        aws-region: ${{ env.AWS_REGION }}
 
      - name: Generate report
        run: |
@@ -143,15 +143,25 @@ jobs:
            groovy diff.groovy -r $REPO -b master -p $REF -c diff_config.xml -l project.properties
          fi
 
-     - name: Copy Report to AWS S3 Bucket
-       run: |
-        bash
-        TIME=`date +%Y%H%M%S`
-        FOLDER="${{needs.parse_body.outputs.branch}}_$TIME"
-        DIFF="./contribution/checkstyle-tester/reports/diff"
-        LINK="https://${{env.AWS_BUCKET_NAME}}.s3.${{env.AWS_REGION}}.amazonaws.com"
-        aws s3 cp $DIFF s3://${{env.AWS_BUCKET_NAME}}/$FOLDER/reports/diff/ --recursive
-        echo $LINK/$FOLDER/reports/diff/index.html > message
+#     - name: Copy Report to AWS S3 Bucket
+#       run: |
+#        bash
+#        TIME=`date +%Y%H%M%S`
+#        FOLDER="${{needs.parse_body.outputs.branch}}_$TIME"
+#        DIFF="./contribution/checkstyle-tester/reports/diff"
+#        LINK="https://${{env.AWS_BUCKET_NAME}}.s3.${{env.AWS_REGION}}.amazonaws.com"
+#        aws s3 cp $DIFF s3://${{env.AWS_BUCKET_NAME}}/$FOLDER/reports/diff/ --recursive
+#        echo $LINK/$FOLDER/reports/diff/index.html > message
+
+     - name: Pushing report to github-actions-report-fetch repo
+       uses: cpina/github-action-push-to-another-repository@master
+       env:
+         API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+       with:
+         source-directory: './contribution/checkstyle-tester/reports/diff'
+         destination-github-username: 'abhishek-kumar09'
+         destination-repository-name: 'github-actions-report-fetch'
+         user-email: abhimait1909@gmail.com
 
      - name: Set output
        id: out
