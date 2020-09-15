@@ -93,12 +93,14 @@ public class LambdaHandler extends AbstractExpressionHandler {
         // If the argument list is the first element on the line
         final DetailAST firstChild = getMainAst().getFirstChild();
         final DetailAST parent = getMainAst().getParent();
+
+        int firstChildColumnNo = expandedTabsColumnNo(firstChild);
         if (parent.getType() != TokenTypes.SWITCH_RULE
-                && getLineStart(firstChild) == expandedTabsColumnNo(firstChild)) {
+                && getLineStart(firstChild) == firstChildColumnNo) {
             final IndentLevel level = getIndent();
             if (isNonAcceptableIndent(firstChild, level)) {
                 isLambdaCorrectlyIndented = false;
-                logError(firstChild, "arguments", expandedTabsColumnNo(firstChild), level);
+                logError(firstChild, "arguments", firstChildColumnNo, level);
             }
         }
 
