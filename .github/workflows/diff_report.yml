@@ -121,7 +121,7 @@ jobs:
      - name: Download contribution
        uses: actions/checkout@v2
        with:
-        repository: checkstyle/contribution
+        repository: abhishek-kumar09/contribution
         ref: master
         path: contribution
 
@@ -169,14 +169,14 @@ jobs:
 #        aws s3 cp $DIFF s3://${{env.AWS_BUCKET_NAME}}/$FOLDER/reports/diff/ --recursive
 #        echo $LINK/$FOLDER/reports/diff/index.html > message
 
-     - name: Pushing report to github-actions-report-fetch repo
+     - name: Pushing report to github repo
        uses: cpina/github-action-push-to-another-repository@master
        env:
          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
        with:
          source-directory: './contribution/checkstyle-tester/reports/diff'
          destination-github-username: 'abhishek-kumar09'
-         destination-repository-name: 'github-actions-report-fetch'
+         destination-repository-name: 'checkstyleDiffReportTempContribition'
          user-email: abhimait1909@gmail.com
 
      - name: Set output
