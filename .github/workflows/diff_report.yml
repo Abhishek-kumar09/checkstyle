@@ -112,8 +112,8 @@ jobs:
          cd checkstyle
          bash
          MAIN_REPO_GIT_URL="https://github.com/checkstyle/checkstyle.git"
-         git remote add original-checkstyle $MAIN_REPO_GIT_URL
-         git fetch original-checkstyle
+         git remote add upstream-master $MAIN_REPO_GIT_URL
+         git fetch upstream-master
          cd ../
 
      # fetch-depth default: 1
@@ -144,7 +144,7 @@ jobs:
          bash
          REF="origin/${{needs.parse_body.outputs.branch}}"
          REPO="../../checkstyle"
-         BASE_BRANCH="original-checkstyle/master"
+         BASE_BRANCH="upstream-master/master"
          if [ -f new_module_config.xml ]; then
            groovy diff.groovy -r $REPO -p $REF -pc new_module_config.xml -m single\
              -l project.properties
