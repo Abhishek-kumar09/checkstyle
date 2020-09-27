@@ -1,5 +1,14 @@
+container:
+  cpu: 4
+  memory: 8G
+
+pipe:
+  name: site-validation
+  steps:
+    - build_script: mvn clean site -Pno-validations
+
 task:
-  main
-    name: run checkstyle
-    script: ./.ci/travis/travis.sh release-dry-run
-    
+  name: verify
+  container:
+    image: maven:latest
+  test_script: mvn clean verify
