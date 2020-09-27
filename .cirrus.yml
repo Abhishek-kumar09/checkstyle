@@ -1,0 +1,5 @@
+task:
+  main
+    name: run checkstyle
+    script: ./.ci/travis/travis.sh release-dry-run
+    
