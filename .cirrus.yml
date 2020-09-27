@@ -5,6 +5,7 @@ container:
 pipe:
   name: site-validation
   steps:
+    - image: maven:latest
     - build_script: mvn clean site -Pno-validations
 
 task:
