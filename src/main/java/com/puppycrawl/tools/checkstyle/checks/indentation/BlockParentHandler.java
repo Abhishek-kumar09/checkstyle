@@ -203,7 +203,9 @@ public class BlockParentHandler extends AbstractExpressionHandler {
             checkExpressionSubtree(nonList, expected, false, false);
 
             final DetailAST nonListStartAst = getFirstAstNode(nonList);
-            checkExpressionSubtree(nonListStartAst, expected, false, false);
+            if(nonListStartAst != nonList) {
+                checkExpressionSubtree(nonListStartAst, expected, false, false);
+            }
         }
     }
 
