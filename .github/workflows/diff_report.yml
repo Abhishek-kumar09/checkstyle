@@ -176,7 +176,7 @@ jobs:
        with:
          source-directory: './contribution/checkstyle-tester/reports/diff'
          destination-github-username: 'abhishek-kumar09'
-         destination-repository-name: 'github-actions-report-fetch'
+         destination-repository-name: 'IndentaionReport'
          user-email: abhimait1909@gmail.com
 
      - name: Set output
